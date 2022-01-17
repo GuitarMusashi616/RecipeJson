@@ -46,6 +46,7 @@ class Planner:
 
         for i,option in enumerate(options):
             print(f"{i}) {option}")
+
         return Prompt.pick_choice("\npick a tag: ", options)
 
     def ask_if_raw(self, unique_item):
@@ -88,13 +89,17 @@ class Planner:
         self.prompt_link_recipe(display_name)
 
         while self.unique_items or self.unique_tags:
+            item = None
             if self.unique_items:
                 item = self.unique_items.pop()
-                self.ask_if_raw(item)
             else:
                 tag = self.unique_tags.pop()
+                if tag in self.tag_to_item:
+                    continue
                 item = self.ask_which_item(tag)
                 self.tag_to_item[tag] = item
+
+            if item and item not in self.raw_materials:
                 self.ask_if_raw(item)
 
     def __repr__(self):
